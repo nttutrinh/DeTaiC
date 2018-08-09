@@ -1,4 +1,33 @@
 SQLServerConnection Conn;
+Conn = new SQLServerConnection("host=nc-star;port=4100;User ID=test01;
+Password=test01;Database Name=Test");
+try
+{
+Conn.Open();
+Console.WriteLine ("Connection successful!");
+}
+catch (Exception ex)
+{
+// Connection failed
+Console.WriteLine(ex.Message);
+return;
+}
+string spCreate = "CREATE PROCEDURE GetEmpSalary(@empno int,@sal
+numeric(7,2) output)AS SELECT @sal = sal from emp where empno = @empno";
+try
+{
+SQLServerCommand DBCmd=new SQLServerCommand(spCreate, Conn);
+DBCmd.ExecuteNonQuery();
+}
+catch (Exception ex)
+{
+//Create procedure failed
+Console.WriteLine (ex.Message);
+return;
+}
+Console.WriteLine ("Procedure Created Successfully!");
+
+SQLServerConnection Conn;
 Conn = new SQLServerConnection("host=nc-star;port=1433; User ID=test01;
 Password=test01;Database Name=Test");
 try
