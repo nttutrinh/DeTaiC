@@ -1,0 +1,31 @@
+SQLServerConnection Conn =
+new SQLServerConnection("host=nc-star;port=4100;User ID=test01;
+        Password=test01;Database Name=Test");
+try
+{
+string selectText = "select sal, job, empno from emp";
+string updateText = "update emp set sal = ?, job = ? where empno = ?";
+SQLServerDataAdapter adapter = new SQLServerDataAdapter(selectText, Conn);
+SQLServerCommand updateCommand = new SQLServerCommand(updateText, Conn);
+adapter.UpdateCommand = updateCommand;
+updateCommand.Parameters.Add("@sal", SQLServerDbType.Int, 15, "SAL");
+updateCommand.Parameters.Add("@job", SQLServerDbType.VarChar, 9, "JOB");
+updateCommand.Parameters.Add("@empno", SQLServerDbType.Int, 15, "empno");
+DataSet myDataSet = new DataSet("emp");
+adapter.Fill(myDataSet, "emp");
+// Give employee number 11 a promotion and a raise
+DataRow changeRow = myDataSet.Tables["emp"].Rows[11];
+changeRow["sal"] = "35000";
+changeRow["job"] = "MANAGER";
+// Send back to database
+adapter.Update(myDataSet, "emp");
+myDataSet.Dispose();
+}
+catch (Exception ex)
+{
+// Display any exceptions
+Console.WriteLine (ex.Message);
+}
+Console.WriteLine("DataSet Updated Successfully!");
+// Close the connection
+Conn.Close();

@@ -1,0 +1,47 @@
+SQLServerConnection Conn;
+Conn = new SQLServerConnection("host=nc-star;port=1433; User ID=test01;
+Password=test01;Database Name=Test");
+try
+{
+Conn.Open();
+Console.WriteLine ("Connection successful!");
+}
+catch (Exception ex)
+{
+// Connection failed
+Console.WriteLine(ex.Message);
+return;
+}
+SQLServerCommand DBCmd = new SQLServerCommand();
+SQLServerTransaction DBTxn = null;
+try
+{
+DBTxn = Conn.BeginTransaction();
+// Set the Connection property of the Command object
+DBCmd.Connection = Conn;
+// Set the text of the Command to the INSERT statement
+DBCmd.CommandText = "insert into emp VALUES
+(16,'HAYES','ADMIN',6,'17-APR-2002',18000,NULL,4)";
+// Set the transaction property of the Command object
+DBCmd.Transaction = DBTxn;
+// Execute the statement with ExecuteNonQuery, because we are not
+// returning results
+DBCmd.ExecuteNonQuery();
+// Now commit the transaction
+DBTxn.Commit();
+// Display any exceptions
+Console.WriteLine ("Transaction Committed!");
+}
+catch (Exception ex)
+{
+// Display any exceptions
+Console.WriteLine (ex.Message);
+// If anything failed after the connection was opened, roll back the
+// transaction
+if (DBTxn != null)
+{
+DBTxn.Rollback();
+}
+}
+// Close the connection
+Conn.Close();
